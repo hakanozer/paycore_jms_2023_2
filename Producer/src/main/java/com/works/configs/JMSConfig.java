@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.converter.MessageType;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -23,6 +26,9 @@ public class JMSConfig {
     @Value("${jms.queue.user}")
     private String user;
 
+    @Value("${jms.queue.customer}")
+    private String customer;
+
     @Bean
     public Destination destination_product() {
         return new ActiveMQQueue(product);
@@ -31,6 +37,11 @@ public class JMSConfig {
     @Bean
     public Destination destination_user() {
         return new ActiveMQQueue(user);
+    }
+
+    @Bean
+    public Destination destination_customer() {
+        return new ActiveMQQueue(customer);
     }
 
     @Bean
@@ -49,8 +60,24 @@ public class JMSConfig {
     public JmsTemplate jmsTemplate_user( ConnectionFactory connectionFactory, Destination destination_user ) {
         JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
         jmsTemplate.setDefaultDestination(destination_user);
+        //jmsTemplate.setMessageConverter(messageConverter());
         return jmsTemplate;
     }
 
+    @Bean
+    public JmsTemplate jmsTemplate_customer( ConnectionFactory connectionFactory, Destination destination_customer, MessageConverter messageConverter ) {
+        JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
+        jmsTemplate.setDefaultDestination(destination_customer);
+        jmsTemplate.setMessageConverter(messageConverter);
+        return jmsTemplate;
+    }
+
+    @Bean
+    public MessageConverter messageConverter() {
+        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
+        messageConverter.setTargetType(MessageType.TEXT);
+        //messageConverter.setTypeIdPropertyName("_type");
+        return messageConverter;
+    }
 
 }

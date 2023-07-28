@@ -24,8 +24,8 @@ public class ProductListner implements MessageListener {
                 long timestampTime = textMessage.getJMSTimestamp();
                 //long deliveryTime = textMessage.getJMSDeliveryTime();
                 String messageTxt = textMessage.getText();
-                //System.out.println(messageID);
-                //System.out.println(timestampTime);
+                System.out.println(messageID);
+                System.out.println(timestampTime);
                 //System.out.println(deliveryTime);
                 //System.out.println(messageTxt);
                 Product product = objectMapper.readValue(messageTxt, Product.class);
