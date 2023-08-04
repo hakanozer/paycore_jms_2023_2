@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.crypto.tink.proto.Tink;
 import com.works.models.CustomerMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -23,6 +25,7 @@ public class CustomerService {
     final ObjectMapper objectMapper;
     final HttpServletRequest req;
     final TinkEncDec tinkEncDec;
+    final RestTemplate restTemplate;
 
     String stData = "";
     public boolean send(CustomerMessage customerMessage) {
@@ -41,6 +44,13 @@ public class CustomerService {
                 TextMessage textMessage = session.createTextMessage(stData);
                 textMessage.setStringProperty("sessionId",sessionID );
                 textMessage.setStringProperty("agent", agent);
+                String url = "https://dummyjson.com/users";
+                ResponseEntity response = restTemplate.getForEntity(url, String.class);
+                if ( response.getStatusCodeValue() != 200 ) {
+                    session.rollback();
+                }
+                Long time = System.currentTimeMillis();
+                System.out.println(time);
                 return textMessage;
             }
         };
