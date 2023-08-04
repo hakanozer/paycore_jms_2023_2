@@ -17,6 +17,11 @@ import javax.jms.TextMessage;
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
+/*
+@Service
+public class SampleJmsErrorHandler implements ErrorHandler {
+ */
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
